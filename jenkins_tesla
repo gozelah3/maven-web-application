@@ -1,1 +1,35 @@
+node{
+  def mavenHome = tool name: 'maven 3.9.9'
+  stage('1cloneCode'){
+    git "https://github.com/gozelah3/maven-web-application"
+  }
+  stage('2Test&Build'){
+    sh "${mavenHome}/bin/mvn package"
+    //bat "${mavenHome}/bin/mvn clean package"
+  }
+  stage('3codeQuality'){
+    sh '/var/lib/jenkins/tools/hudson.tasks.Maven_MavenInstallation/maven_3.9.9/bin/mvn sonar:sonar -Dsonar.scanner.force-deploy=true -DargLine="--add-opens java.base/java.lang=ALL-UNNAMED"'
+  }
+  stage('4uploadArtifacts'){
+    sh "${mavenHome}/bin/mvn deploy"
+  }
+  stage('5deploy2UAT'){
+    sh "echo 'deploy to UAT'  "
+    deploy adapters: [tomcat8(credentialsId: 'TomcatDomiCredentials', path: '', url: 'http://184.72.174.131:8080/')], contextPath: null, war: 'target/*war'
+  }
+  stage('6approvalGate'){
+    sh "echo 'ready for review' "
+    timeout(time:5, unit:'DAYS') {
+    input message: 'Application ready for deployment, Please review and approve'
+    }
+  }
+  stage('7deploy2Prod'){
+    deploy adapters: [tomcat8(credentialsId: 'TomcatDomiCredentials', path: '', url: 'http://184.72.174.131:8080/')], contextPath: null, war: 'target/*war'
+  }
+  stage('8emailNotification'){
+    emailext body: '''Hi all,
 
+Pls Check build status
+Chigo Technologies''', recipientProviders: [buildUser(), developers(), upstreamDevelopers(), contributor(), brokenBuildSuspects(), brokenTestsSuspects()], subject: 'build status', to: 'tesla-app@gmail.com'
+  }
+}
