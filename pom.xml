@@ -90,19 +90,19 @@
       <repository>
         <id>nexus</id>
         <name>Landmark Technologies Releases Nexus Repository</name>
-        <url>http://3.90.243.220:8181/mylandmarktech/repository/boafeature-releases/</url>
+        <url>http://34.202.163.242:8181/mylandmarktech/repository/boafeature-releases/</url>
       </repository>
       
       <snapshotRepository>
         <id>nexus</id>
         <name>Landmark Technologies Snapshot Nexus Repository </name>
-        <url>http://3.90.243.220:8181/mylandmarktech/repository/boafeature-snapshots/</url>
+        <url>http://34.202.163.242:8181/mylandmarktech/repository/boafeature-snapshots/</url>
       </snapshotRepository>
       
   </distributionManagement>
 	
 	<build>
-		<finalName>tesla</finalName>
+		<finalName>boa</finalName>
 		
 		<plugins>
 			<plugin>
